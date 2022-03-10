@@ -1,7 +1,9 @@
 package br.com.mbs.controller;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -63,5 +65,48 @@ public class UsuarioController {
 		 return ResponseEntity.ok(mapaUsuario.get(id));
 	  }
 	
+	 
+	 @RequestMapping(value = "/deletar/{id}", method = RequestMethod.DELETE)	 
+	  public ResponseEntity<Void> deletar(
+			  
+			  @PathVariable("id") Integer id)
+			  
+			  throws Exception {		 
+		 
+		 System.out.println("Processando deletar ");
+		 mapaUsuario.remove(id);
+		 return ResponseEntity.ok().build();
+	  }
+	 
+	 @RequestMapping(value = "/atualizar/", method = RequestMethod.PUT)	 
+	  public ResponseEntity<String> atualizarUsuario(
+			  
+			  @RequestParam("id") Integer id,
+			  @RequestParam("cep") String cep,
+			  @RequestParam("idade") Integer idade)
+	  
+			   throws Exception {
+		 
+		 System.out.println("Processando atualizarUsuario");
+		 
+		 Usuario usuario = mapaUsuario.get(id);
+		 usuario.cep = cep;
+		 usuario.idade = idade;		 
+		 
+		 
+		 return ResponseEntity.ok("sucesso");
+	  }
+	 
+	 @RequestMapping(value = "/listar/", method = RequestMethod.GET)	 
+	  public ResponseEntity<List<Usuario>> listar()			  
+			  throws Exception {		 
+		 
+		 System.out.println("Processando listar ");
+		 ArrayList<Usuario> lista = new ArrayList<>(mapaUsuario.values());
+		 		 
+		 return ResponseEntity.ok(lista);
+	  }
+	 
+	 
 
 }
