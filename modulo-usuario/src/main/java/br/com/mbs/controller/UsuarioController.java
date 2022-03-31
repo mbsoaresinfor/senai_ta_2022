@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import br.com.mbs.entidades.Usuario;
+import br.com.mbs.repositorio.CepRepositorio;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -27,6 +29,9 @@ import io.swagger.annotations.ApiResponses;
 @Api(description="Api de usuarios")
 public class UsuarioController {
 
+	@Autowired
+	private CepRepositorio cepRepositorio;
+	
 	Map<Integer,Usuario> mapaUsuario = new HashMap<Integer,Usuario>();
 	Integer contador = 1;
 	
@@ -56,8 +61,14 @@ public class UsuarioController {
 		 	
 		 // error de negocio
 		 if(usuario.cep.equals("")) {
-			 return new ResponseEntity<>("Error no cep", HttpStatus.METHOD_NOT_ALLOWED); 
+			 return new ResponseEntity<>("Error no cep", HttpStatus.BAD_REQUEST); 
 		 }
+		 
+		 ResponseEntity<Boolean> retCep = cepRepositorio.existeCep(usuario.cep);
+		 if(retCep.getBody().equals(Boolean.FALSE)) {
+			 return new ResponseEntity<>("Cep informado não existe", HttpStatus.BAD_REQUEST);
+		 }
+		 
 		 
 		 mapaUsuario.put(contador, usuario);
 		 
