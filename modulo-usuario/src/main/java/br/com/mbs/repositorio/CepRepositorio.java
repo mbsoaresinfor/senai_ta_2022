@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import br.com.mbs.entidades.Cep;
 
 //url: endereco de onde esta o servico.
-@FeignClient(value = "modulo-endereco", url = "http://localhost:9091/cep/")
+@FeignClient(value = "modulo-endereco", 
+url = "http://localhost:9091/cep/",
+fallback = CepRepositoryFalha.class)
 public interface CepRepositorio {
 
 	@RequestMapping(value = "/existe-cep/{cep}", method = RequestMethod.GET)
