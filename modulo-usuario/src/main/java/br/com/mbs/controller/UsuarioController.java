@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import br.com.mbs.entidades.Cep;
 import br.com.mbs.entidades.Usuario;
+import br.com.mbs.entidades.UsuarioResponse;
 import br.com.mbs.repositorio.CepRepositorio;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -110,14 +113,25 @@ public class UsuarioController {
 			 
 	 })
 	 @RequestMapping(value = "/buscar/{id}", method = RequestMethod.GET)	 
-	  public ResponseEntity<Usuario> buscar(
+	  public ResponseEntity<UsuarioResponse> buscar(
 			  
 			  @PathVariable("id") Integer id)
 			  
 			  throws Exception {		 
 		 
 		 System.out.println("Processando buscar ");
-		 return ResponseEntity.ok(mapaUsuario.get(id));
+		 Usuario usuario =  mapaUsuario.get(id);
+		 ResponseEntity<Cep> cep = cepRepositorio.buscarCep(usuario.cep);
+		 
+		 UsuarioResponse ur = new UsuarioResponse();
+		 ur.id = usuario.id;
+		 ur.idade = usuario.idade;
+		 ur.nome = usuario.nome;
+		 ur.cep = usuario.cep;
+		 ur.cepCompleto = cep.getBody();
+		 
+		 
+		 return ResponseEntity.ok(ur );
 	  }
 	
 	 
