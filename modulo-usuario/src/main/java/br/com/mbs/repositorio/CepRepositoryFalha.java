@@ -26,4 +26,10 @@ public class CepRepositoryFalha implements CepRepositorio{
 		return ResponseEntity.ok(cepMock);
 	}
 
+	@Override
+	public ResponseEntity<String> buscarNomeLogradouro(String cep) throws Exception {
+
+		 return ResponseEntity.ok("NOME_RUA_MOCK");
+	}
+
 }

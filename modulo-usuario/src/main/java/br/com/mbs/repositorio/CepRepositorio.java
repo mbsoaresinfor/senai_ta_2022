@@ -23,4 +23,11 @@ public interface CepRepositorio {
 	 public ResponseEntity<Cep> buscarCep(
 			  @PathVariable("cep") String cep
 			  ) throws Exception;
+	 
+	 @RequestMapping(value = "/busca-nome-logradouro/{cep}", method = RequestMethod.GET)	 
+	  public ResponseEntity<String> buscarNomeLogradouro(
+			  @PathVariable("cep") String cep
+			  ) throws Exception;
+	 
+	
 }

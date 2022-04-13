@@ -83,6 +83,22 @@ public class CepController {
 		 
 	  }
 	 
+	 @RequestMapping(value = "/busca-nome-logradouro/{cep}", method = RequestMethod.GET)	 
+	  public ResponseEntity<String> buscarNomeLogradouro(
+			  @PathVariable("cep") String cep
+			  ) throws Exception {		 
+		 System.out.println("Processando buscarNomeLogradouro");
+		 
+		 Cep objCep = mapaCep.get(cep);
+		 String nomeRua = "";
+		 if(objCep != null) {
+			 nomeRua = objCep.nomeLogradouro;
+		 }
+		 
+		 return ResponseEntity.ok(nomeRua);		 
+		 
+	  }
+	 
 	 
 
 }

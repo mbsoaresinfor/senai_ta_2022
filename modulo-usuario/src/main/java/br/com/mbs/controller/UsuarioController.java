@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.mbs.entidades.Cep;
+import br.com.mbs.entidades.NomeUsuarioELogradouroResponse;
 import br.com.mbs.entidades.Usuario;
 import br.com.mbs.entidades.UsuarioResponse;
 import br.com.mbs.repositorio.CepRepositorio;
@@ -184,6 +185,29 @@ public class UsuarioController {
 		 ArrayList<Usuario> lista = new ArrayList<>(mapaUsuario.values());
 		 		 
 		 return ResponseEntity.ok(lista);
+	  }
+	 
+	 @RequestMapping(value = "/busca-usuario-nome-logradouro/{id}", method = RequestMethod.GET)	 
+	  public ResponseEntity<NomeUsuarioELogradouroResponse> buscaUsuarioComSeuNomeLogradouro(
+			  
+			  @PathVariable("id") Integer id)
+			  
+			  throws Exception {		 
+		 
+		 System.out.println("Processando buscaUsuarioComSeuNomeLogradouro ");
+		 Usuario usuario =  mapaUsuario.get(id);
+		 String nomeUsuario = usuario.nome;
+		 
+		 ResponseEntity<String> nomeLogradouro = cepRepositorio.
+				 	buscarNomeLogradouro(usuario.cep);
+		 
+		
+		 NomeUsuarioELogradouroResponse response = 
+				 new NomeUsuarioELogradouroResponse();
+		 response.setNomeLogradouro(nomeLogradouro.getBody());
+		 response.setNomeUsuario(nomeUsuario);		 
+		 
+		 return ResponseEntity.ok(response);
 	  }
 	 
 	 
