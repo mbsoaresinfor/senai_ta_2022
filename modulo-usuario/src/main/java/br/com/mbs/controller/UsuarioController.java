@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
+import org.camunda.bpm.engine.RuntimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,9 @@ public class UsuarioController {
 
 	@Autowired
 	private CepRepositorio cepRepositorio;
+	
+	@Autowired
+	private RuntimeService runtimeService;
 	
 	Map<Integer,Usuario> mapaUsuario = new HashMap<Integer,Usuario>();
 	Integer contador = 1;
@@ -209,6 +213,29 @@ public class UsuarioController {
 		 
 		 return ResponseEntity.ok(response);
 	  }
+	 
+	 @RequestMapping(value = "/salvar-por-camunda/", method = RequestMethod.POST, 
+			 consumes ={MediaType.APPLICATION_JSON})	 
+	  public ResponseEntity<String> salvarPorCamunda(
+			  @RequestBody Usuario usuario)
+			   throws Exception {
+		 
+		 System.out.println("Processando salvarPorCamunda");
+		 
+		 usuario.id = contador;
+		 	
+		 Map<String,Object> valores = new HashMap<String, Object>();
+		 valores.put("mapa-usuario", mapaUsuario );
+		 valores.put("usuario", usuario);
+		 valores.put("id-usuario",contador);
+		 
+		 runtimeService.
+		 	startProcessInstanceByKey("cadastro_usuario",valores);
+		 
+		 		 
+		 return ResponseEntity.ok(usuario.id.toString());
+	  }
+	 
 	 
 	 
 
