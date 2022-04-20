@@ -4,11 +4,11 @@
     <bpmn:startEvent id="StartEvent_1" name="inicio fluxo">
       <bpmn:outgoing>Flow_0pe7a64</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="Activity_03txbxr" name="cadastro usuario memoria" camunda:delegateExpression="{CadastroUsuarioMemoriaDelegate}">
+    <bpmn:serviceTask id="Activity_03txbxr" name="cadastro usuario memoria" camunda:delegateExpression="${CadastroUsuarioMemoriaDelegate}">
       <bpmn:incoming>Flow_0pe7a64</bpmn:incoming>
       <bpmn:outgoing>Flow_1j7tx43</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_131mmgr" name="Envia e-mail sustentacao" camunda:delegateExpression="{EnviaEmailSustentacaoDelegate}">
+    <bpmn:serviceTask id="Activity_131mmgr" name="Envia e-mail sustentacao" camunda:delegateExpression="${EnviaEmailSustentacaoDelegate}">
       <bpmn:incoming>Flow_1j7tx43</bpmn:incoming>
       <bpmn:outgoing>Flow_0fub7k1</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -22,18 +22,24 @@
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="cadastro_usuario">
-      <bpmndi:BPMNEdge id="Flow_0pe7a64_di" bpmnElement="Flow_0pe7a64">
-        <di:waypoint x="198" y="117" />
-        <di:waypoint x="260" y="117" />
+      <bpmndi:BPMNEdge id="Flow_0fub7k1_di" bpmnElement="Flow_0fub7k1">
+        <di:waypoint x="540" y="117" />
+        <di:waypoint x="602" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1j7tx43_di" bpmnElement="Flow_1j7tx43">
         <di:waypoint x="360" y="117" />
         <di:waypoint x="440" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0fub7k1_di" bpmnElement="Flow_0fub7k1">
-        <di:waypoint x="540" y="117" />
-        <di:waypoint x="602" y="117" />
+      <bpmndi:BPMNEdge id="Flow_0pe7a64_di" bpmnElement="Flow_0pe7a64">
+        <di:waypoint x="198" y="117" />
+        <di:waypoint x="260" y="117" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="162" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="154" y="142" width="52" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_109why9_di" bpmnElement="Activity_03txbxr">
         <dc:Bounds x="260" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -44,12 +50,6 @@
         <dc:Bounds x="602" y="99" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="593" y="142" width="56" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
-        <dc:Bounds x="162" y="99" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="154" y="142" width="52" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
