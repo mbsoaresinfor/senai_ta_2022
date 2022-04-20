@@ -23,9 +23,17 @@ public class CadastroUsuarioMemoriaDelegate
 		Usuario usuario = (Usuario) execution.getVariable("usuario");
 		Integer contador = (Integer) execution.getVariable("id-usuario");
 		
-		mapaUsuario.put(contador, usuario);
-		 
-		contador++;
+		if(usuario.nome.length() <= 1) {
+			// tem problema
+			execution.setVariable("email_diretor",false);
+		}else {
+			// tudo ok
+			execution.setVariable("email_diretor", true);
+			mapaUsuario.put(contador, usuario);			 
+			contador++;
+		}
+		
+		
 		
 	}
 
