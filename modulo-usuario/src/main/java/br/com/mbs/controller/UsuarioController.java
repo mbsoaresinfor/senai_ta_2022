@@ -9,6 +9,14 @@ import java.util.Map;
 import javax.ws.rs.core.MediaType;
 
 import org.camunda.bpm.engine.RuntimeService;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +32,7 @@ import br.com.mbs.entidades.NomeUsuarioELogradouroResponse;
 import br.com.mbs.entidades.Usuario;
 import br.com.mbs.entidades.UsuarioResponse;
 import br.com.mbs.repositorio.CepRepositorio;
+import br.com.mbs.servico.UsuarioServico;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -40,8 +49,14 @@ public class UsuarioController {
 	@Autowired
 	private RuntimeService runtimeService;
 	
-	Map<Integer,Usuario> mapaUsuario = new HashMap<Integer,Usuario>();
-	Integer contador = 1;
+	@Autowired
+	private UsuarioServico usuarioServico;
+	
+	@Autowired
+    private JobLauncher jobLauncher;
+	
+	@Autowired
+    private Job processJob;
 	
 	 @RequestMapping(value = "/teste/", method = RequestMethod.GET)	 
 	  public ResponseEntity<Void> teste() throws Exception {		 
@@ -64,8 +79,6 @@ public class UsuarioController {
 			   throws Exception {
 		 
 		 System.out.println("Processando salvarUsuario2");
-		 
-		 usuario.id = contador;
 		 	
 		 // error de negocio
 		 if(usuario.cep.equals("")) {
@@ -77,10 +90,8 @@ public class UsuarioController {
 			 return new ResponseEntity<>("Cep informado não existe", HttpStatus.BAD_REQUEST);
 		 }
 		 
+		 usuarioServico.adiciona(usuario);
 		 
-		 mapaUsuario.put(contador, usuario);
-		 
-		 contador++;
 		 
 		 return ResponseEntity.ok(usuario.id.toString());
 	  }
@@ -101,12 +112,9 @@ public class UsuarioController {
 		 Usuario usuario = new Usuario();
 		 usuario.cep = cep;
 		 usuario.idade = idade;
-		 usuario.nome = nome;
-		 usuario.id = contador;
+		 usuario.nome = nome;		 
 		 		 
-		 mapaUsuario.put(contador, usuario);
-		 
-		 contador++;
+		 usuarioServico.adiciona(usuario);
 		 
 		 return ResponseEntity.ok(usuario.id);
 	  }
@@ -125,7 +133,7 @@ public class UsuarioController {
 			  throws Exception {		 
 		 
 		 System.out.println("Processando buscar ");
-		 Usuario usuario =  mapaUsuario.get(id);
+		 Usuario usuario =  usuarioServico.buscar(id);
 		 ResponseEntity<Cep> cep = cepRepositorio.buscarCep(usuario.cep);
 		 
 		 UsuarioResponse ur = new UsuarioResponse();
@@ -153,7 +161,7 @@ public class UsuarioController {
 			  throws Exception {		 
 		 
 		 System.out.println("Processando deletar ");
-		 mapaUsuario.remove(id);
+		 usuarioServico.remover(id);
 		 return ResponseEntity.ok().build();
 	  }
 	 
@@ -173,7 +181,7 @@ public class UsuarioController {
 		 
 		 System.out.println("Processando atualizarUsuario");
 		 
-		 Usuario usuario = mapaUsuario.get(id);
+		 Usuario usuario = usuarioServico.buscar(id);
 		 usuario.cep = cep;
 		 usuario.idade = idade;		 
 		 
@@ -186,7 +194,7 @@ public class UsuarioController {
 			  throws Exception {		 
 		 
 		 System.out.println("Processando listar ");
-		 ArrayList<Usuario> lista = new ArrayList<>(mapaUsuario.values());
+		 ArrayList<Usuario> lista = new ArrayList<>(usuarioServico.listar());
 		 		 
 		 return ResponseEntity.ok(lista);
 	  }
@@ -199,7 +207,7 @@ public class UsuarioController {
 			  throws Exception {		 
 		 
 		 System.out.println("Processando buscaUsuarioComSeuNomeLogradouro ");
-		 Usuario usuario =  mapaUsuario.get(id);
+		 Usuario usuario =  usuarioServico.buscar(id);
 		 String nomeUsuario = usuario.nome;
 		 
 		 ResponseEntity<String> nomeLogradouro = cepRepositorio.
@@ -221,13 +229,11 @@ public class UsuarioController {
 			   throws Exception {
 		 
 		 System.out.println("Processando salvarPorCamunda");
-		 
-		 usuario.id = contador;
 		 	
 		 Map<String,Object> valores = new HashMap<String, Object>();
-		 valores.put("mapa-usuario", mapaUsuario );
+		 valores.put("mapa-usuario", usuarioServico.getMapaUsuario() );
 		 valores.put("usuario", usuario);
-		 valores.put("id-usuario",contador);
+		 valores.put("id-usuario",usuarioServico.getContador());
 		 
 		 runtimeService.
 		 	startProcessInstanceByKey("cadastro_usuario",valores);
@@ -235,6 +241,16 @@ public class UsuarioController {
 		 		 
 		 return ResponseEntity.ok(usuario.id.toString());
 	  }
+	 
+	 @RequestMapping(value = "/inicia-processamento-lote/", method = RequestMethod.GET)	 
+	  public void iniciarProcessamentoLote() throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException{
+		 JobParameters jobParameters = new JobParametersBuilder()
+					.addLong("time", System.currentTimeMillis())
+	                .toJobParameters();
+	        jobLauncher.run(processJob, jobParameters);
+		 
+	 }
+			  
 	 
 	 
 	 

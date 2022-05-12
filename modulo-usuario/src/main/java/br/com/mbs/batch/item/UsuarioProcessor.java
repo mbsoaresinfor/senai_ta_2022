@@ -10,7 +10,11 @@ public class UsuarioProcessor
 	@Override
 	public Usuario process(Usuario item) throws Exception {
 
-		return null;
+		System.out.println("Processor " + item);
+		// logica de negocio (processaemnto)
+		item.nome = item.nome.toUpperCase();
+		
+		return item;
 	}
 
 }
