@@ -39,19 +39,25 @@ public class BatchConfiguration {
 	}
 	
 	@Bean
-	public Job processJob() {
+	public Job processJob(UsuarioReader usuarioReader,
+			UsuarioProcessor usuarioProcessor,
+			UsuarioWriter usuarioWriter) {
 		return jobBuilderFactory.get("processJob")
 				.incrementer(new RunIdIncrementer())
-				.flow(orderStep1()).end().build();
+				.flow(orderStep1(usuarioReader,
+						usuarioProcessor, 
+						usuarioWriter)).end().build();
 	}
 
 	@Bean
-	public Step orderStep1() {
+	public Step orderStep1(UsuarioReader usuarioReader,
+			UsuarioProcessor usuarioProcessor,
+			UsuarioWriter usuarioWriter) {
 		return stepBuilderFactory.get("orderStep1").
 				<Usuario, Usuario> chunk(1)
-				.reader(usuarioReader())
-				.processor(usuarioProcessor())
-				.writer(usuarioWriter())
+				.reader(usuarioReader)
+				.processor(usuarioProcessor)
+				.writer(usuarioWriter)
 				.build();
 	}
 
