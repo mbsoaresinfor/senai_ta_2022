@@ -20,26 +20,26 @@ public class UsuarioReader implements ItemReader<Usuario>{
 	
 	private Iterator<Usuario> it ;
 	
-	private boolean jaBuscado;
+	private Usuario usuarioRetorno;
 	
-	 @PostConstruct
-	 public void postConstruct() {
-			//it = usuarioServico.listar().iterator();	       
-	 }
+	@PostConstruct
+	public void postConstruct() {				       
+	}
 	
 	
 	@Override
 	public Usuario read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
 		System.out.println("Reader");
-		if(jaBuscado == false) {
-			it = usuarioServico.listar().iterator();
-			jaBuscado = true;
-		}
-		while(it.hasNext()) {
-			return it.next();
-		}
 		
-		return null;
+		if(usuarioRetorno == null) {				
+			it = usuarioServico.listar().iterator();
+		}
+			
+		while(it.hasNext()) {
+			return usuarioRetorno = it.next();			
+		}	
+		usuarioRetorno = null;
+		return usuarioRetorno;
 		
 	}
 
